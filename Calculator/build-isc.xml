@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="deployable" name="Calculator">
+	<property name="build" value="..\..\..\builds" />
+	<property name="thirdparty" value="..\..\..\dependency\thirdparty\lib" />
+	<property name="projectName" value="Calculator" />
+	<property name="version" value="1.0" />
+	<property name="apacheCXFLib" value="${thirdparty}\apache-cxf-3.1.5" />
+	<property name="build-isc" value="..\..\..\builds\katalyst-ISC" />
+	<property name="war.name" value="${build-isc}/${projectName}/${projectName}.war" />
+	<tstamp>
+		<format pattern="yyyy-dd-MM HH:mm:ss" property="timestamp" />
+	</tstamp>
+	<target depends="clean" name="compile">
+		<mkdir dir="classes" />
+		<javac debug="true" destdir="classes" includeantruntime="false" srcdir="src">
+			<classpath>
+				<fileset dir="${thirdparty}">
+					<include name="commons-logging.jar" />
+					<include name="servlet-api.jar" />
+					<include name="bcprov-jdk16-146.jar" />
+					<include name="iText-2.1.3.jar" />
+					<include name="rbarcode.jar" />
+					<include name="commons-beanutils.jar" />
+					<include name="commons-dbcp.jar" />
+					<include name="mysql-connector-java-5.1.13-bin.jar" />
+				</fileset>
+				<fileset dir="${apacheCXFLib}">
+					<include name="cxf-core-3.1.5.jar" />
+				</fileset>
+				<fileset dir="${thirdparty}/spring-4.1.7">
+					<include name="spring-beans-4.1.7.RELEASE.jar" />
+					<include name="spring-context-4.1.7.RELEASE.jar" />
+					<include name="spring-core-4.1.7.RELEASE.jar" />
+					<include name="spring-web-4.1.7.RELEASE.jar" />
+					<include name="aopalliance-1.0.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+		<copy todir="classes">
+			<fileset dir="src">
+				<include name="**/*.xml" />
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+	</target>
+	<target depends="compile" name="package">
+		<mkdir dir="${build-isc}/${projectName}/lib" />
+		<jar basedir="classes" index="true" jarfile="${build-isc}/${projectName}/lib/${projectName}.jar">
+			<manifest>
+				<attribute name="Built-By" value="Team Spartans" />
+				<attribute name="Build-Timestamp" value="${timestamp}" />
+				<attribute name="Specification-Version" value="1.0" />
+				<attribute name="Specification-Vendor" value="Capsilon" />
+				<attribute name="Specification-Title" value="Katalyst Framework" />
+				<attribute name="Implementation-Title" value="Katalyst Webservice" />
+				<attribute name="Implementation-Version" value="${version}" />
+				<attribute name="Implementation-Vendor" value="Capsilon" />
+			</manifest>
+		</jar>
+	</target>
+	<target depends="package" description="package the .java files into war." name="deployable">
+		<war basedir="Web-Root" destfile="${war.name}">
+			<manifest>
+				<attribute name="Built-By" value="Team Spartans" />
+				<attribute name="Build-Timestamp" value="${timestamp}" />
+				<attribute name="Specification-Version" value="10.3" />
+				<attribute name="Specification-Vendor" value="Capsilon" />
+				<attribute name="Specification-Title" value="Katalyst Framework" />
+				<attribute name="Implementation-Title" value="Katalyst Webservice Gateway" />
+				<attribute name="Implementation-Version" value="${version}" />
+				<attribute name="Implementation-Vendor" value="Capsilon" />
+			</manifest>
+			<lib dir="${build-isc}/${projectName}/lib">
+				<include name="*.jar" />
+			</lib>
+			<lib dir="${apacheCXFLib}">
+				<include name="cxf-core-3.1.5.jar" />
+				<include name="cxf-rt-transports-http-3.1.5.jar" />
+				<include name="cxf-rt-frontend-jaxws-3.1.5.jar" />
+				<include name="cxf-rt-frontend-simple-3.1.5.jar" />
+				<include name="cxf-rt-bindings-soap-3.1.5.jar" />
+				<include name="cxf-rt-databinding-jaxb-3.1.5.jar" />
+				<include name="cxf-rt-wsdl-3.1.5.jar" />
+				<include name="wsdl4j-1.6.3.jar" />
+				<include name="woodstox-core-asl-4.4.1.jar" />
+				<include name="stax2-api-3.1.4.jar" />
+				<include name="xml-resolver-1.2.jar" />
+				<include name="xmlschema-core-2.2.1.jar" />
+				<include name="neethi-3.0.3.jar" />
+				<include name="jaxb-core-2.2.11.jar" />
+				<include name="jaxb-impl-2.2.11.jar" />
+			</lib>
+			<lib dir="${thirdparty}">
+				<include name="activation.jar" />
+				<include name="axis.jar" />
+				<include name="jaxrpc-api.jar" />
+				<include name="jaxrpc-impl.jar" />
+				<include name="pjl-comp-filter-1.7.jar" />
+				<include name="bcprov-jdk16-146.jar" />
+				<include name="commons-discovery.jar" />
+				<include name="commons-logging.jar" />
+				<include name="commons-codec-1.3.jar" />
+				<include name="commons-httpclient-3.1.jar" />
+				<include name="commons-pool-1.4.jar" />
+				<include name="xmlworker-5.5.0.jar" />
+				<include name="commons-beanutils.jar" />
+				<include name="commons-collections-3.1.jar" />
+				<include name="commons-dbcp.jar" />
+			</lib>
+
+			<lib dir="${thirdparty}/spring-4.1.7">
+				<include name="spring-beans-4.1.7.RELEASE.jar" />
+				<include name="spring-context-4.1.7.RELEASE.jar" />
+				<include name="spring-context-support-4.1.7.RELEASE.jar" />
+				<include name="spring-core-4.1.7.RELEASE.jar" />
+				<include name="spring-expression-4.1.7.RELEASE.jar" />
+				<include name="spring-web-4.1.7.RELEASE.jar" />
+				<include name="spring-aop-4.1.7.RELEASE.jar" />
+				<include name="spring-jdbc-4.1.7.RELEASE.jar" />
+				<include name="spring-tx-4.1.7.RELEASE.jar" />
+				<include name="aopalliance-1.0.jar" />
+			</lib>
+		</war>
+	</target>
+	<target name="clean">
+		<delete dir="classes" />
+		<delete dir="${build-isc}/${projectName}" />
+	</target>
+</project>
